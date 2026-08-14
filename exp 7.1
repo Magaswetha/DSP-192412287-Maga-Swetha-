@@ -1,0 +1,60 @@
+clc;
+clear;
+close all;
+
+%% Signal Parameters
+fs = 1000;
+t = (0:999)/fs;
+
+% Original signal
+s = sin(2*pi*100*t) + 0.5*sin(2*pi*200*t);
+
+% Gaussian noise
+n = 0.3*randn(size(t));
+
+% Noisy signal
+x = s + n;
+
+%% Figure 1: Signal with Noise
+figure;
+plot(t, x);
+grid on;
+xlabel('Time (s)');
+ylabel('Amplitude');
+title('Signal with Noise');
+
+%% Figure 2: Power Spectral Density
+figure;
+periodogram(x, [], [], fs);
+title('PSD using Periodogram');
+
+%% Figure 3: Magnitude Spectrum
+figure;
+
+X = abs(fft(x));
+f = (0:length(X)-1)*fs/length(X);
+
+plot(f(1:500), X(1:500));
+grid on;
+xlabel('Frequency (Hz)');
+ylabel('Magnitude');
+title('Magnitude Spectrum');
+
+%% Figure 4: Signal and Noise Power Comparison
+figure;
+
+signal_power = mean(s.^2);
+noise_power = var(n);
+
+bar([signal_power noise_power]);
+
+set(gca, 'XTick', 1:2);
+set(gca, 'XTickLabel', {'Signal', 'Noise'});
+
+ylabel('Power');
+title('Power Comparison');
+grid on;
+
+%% Display Power Values
+fprintf('Signal Power = %f\n', signal_power);
+fprintf('Noise Power  = %f\n', noise_power);
